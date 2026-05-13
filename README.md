@@ -23,6 +23,6 @@ Open `/` for the public page and `/dashboard` for the protected editor.
 ## Link Storage
 
 - Local fallback: `data/links.json`
-- Remote storage: Vercel Blob object named `links.json`
+- Remote storage: private Vercel Blob object named `links.json`
 
 If `BLOB_READ_WRITE_TOKEN` is present, saves go to both the local JSON file and Vercel Blob. If Blob is not configured, the app continues using only `data/links.json`.

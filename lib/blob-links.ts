@@ -73,7 +73,7 @@ export async function getLinks() {
 
     if (error instanceof BlobNotFoundError) {
       await put(blobPath, JSON.stringify(local, null, 2), {
-        access: "public",
+        access: "private",
         addRandomSuffix: false,
         allowOverwrite: true,
         contentType: "application/json",
@@ -98,7 +98,7 @@ export async function persistLinks(data: LinkData) {
 
   if (hasBlobToken()) {
     await put(blobPath, JSON.stringify(normalized, null, 2), {
-      access: "public",
+      access: "private",
       addRandomSuffix: false,
       allowOverwrite: true,
       contentType: "application/json",
