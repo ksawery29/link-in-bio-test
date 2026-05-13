@@ -1,6 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { BlobNotFoundError, head, put } from "@vercel/blob";
+import { BlobNotFoundError, get, put } from "@vercel/blob";
 import { defaultLinkData } from "./default-links";
 import type { LinkData } from "./types";
 
@@ -31,7 +31,19 @@ function normalizeLinkData(input: Partial<LinkData> | null | undefined): LinkDat
 async function readLocalLinks() {
   await ensureLocalFile();
   const raw = await readFile(localFilePath, "utf8");
-  return normalizeLinkData(JSON.parse(raw) as LinkData);
+  const trimmed = raw.trim();
+
+  if (!trimmed) {
+    await writeLocalLinks(defaultLinkData);
+    return defaultLinkData;
+  }
+
+  try {
+    return normalizeLinkData(JSON.parse(trimmed) as LinkData);
+  } catch {
+    await writeLocalLinks(defaultLinkData);
+    return defaultLinkData;
+  }
 }
 
 async function writeLocalLinks(data: LinkData) {
@@ -57,17 +69,24 @@ export async function getLinks() {
   }
 
   try {
-    const blob = await head(blobPath, {
+    const blob = await get(blobPath, {
+      access: "private",
+      useCache: false,
       token: process.env.BLOB_READ_WRITE_TOKEN,
     });
-    const response = await fetch(blob.url, { cache: "no-store" });
 
-    if (!response.ok) {
-      throw new Error(`Blob read failed with ${response.status}`);
+    if (!blob || !blob.stream) {
+      throw new BlobNotFoundError();
     }
 
-    const json = (await response.json()) as LinkData;
-    return normalizeLinkData(json);
+    const raw = await new Response(blob.stream).text();
+    const trimmed = raw.trim();
+
+    if (!trimmed) {
+      throw new Error("Blob content is empty.");
+    }
+
+    return normalizeLinkData(JSON.parse(trimmed) as LinkData);
   } catch (error) {
     const local = await readLocalLinks();
 
