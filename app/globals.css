@@ -376,11 +376,42 @@ textarea {
   background: linear-gradient(135deg, rgba(201, 168, 76, 0.12), rgba(201, 168, 76, 0.04));
   border-color: rgba(201, 168, 76, 0.35);
   padding: 22px 24px;
+  box-shadow: 0 0 0 1px rgba(232, 196, 106, 0.25), 0 12px 36px rgba(201, 168, 76, 0.18);
+  transform: translateY(-2px);
+  animation: fadeUp 0.8s ease both, featuredPulse 2.8s ease-in-out infinite;
 }
 
 .lun-link-btn.featured .lun-link-title {
   color: var(--gold-light);
   font-size: 16px;
+  text-shadow: 0 0 14px rgba(232, 196, 106, 0.28);
+}
+
+.lun-link-btn.featured .lun-link-icon {
+  background: rgba(201, 168, 76, 0.14);
+  border-color: rgba(232, 196, 106, 0.45);
+  box-shadow: 0 0 18px rgba(232, 196, 106, 0.18);
+}
+
+.lun-link-btn.featured .lun-link-arrow {
+  opacity: 0.95;
+  transform: translateX(2px);
+}
+
+.lun-link-btn.featured:hover {
+  border-color: rgba(232, 196, 106, 0.65);
+  transform: translateX(4px) translateY(-3px) scale(1.01);
+  box-shadow: 0 0 0 1px rgba(232, 196, 106, 0.38), 0 18px 46px rgba(201, 168, 76, 0.24);
+}
+
+.lun-link-btn.featured::before {
+  opacity: 0.85;
+  width: 3px;
+}
+
+.lun-link-btn.featured::after {
+  opacity: 1;
+  background: linear-gradient(90deg, rgba(201, 168, 76, 0.16) 0%, rgba(201, 168, 76, 0.04) 42%, transparent 100%);
 }
 
 .lun-featured-badge {
@@ -396,6 +427,7 @@ textarea {
   text-transform: uppercase;
   padding: 3px 10px;
   border-radius: 0 0 4px 4px;
+  box-shadow: 0 8px 20px rgba(201, 168, 76, 0.3);
 }
 
 .lun-footer {
@@ -510,6 +542,16 @@ textarea {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes featuredPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px rgba(232, 196, 106, 0.2), 0 10px 32px rgba(201, 168, 76, 0.14);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgba(232, 196, 106, 0.42), 0 16px 40px rgba(201, 168, 76, 0.24);
   }
 }
 
