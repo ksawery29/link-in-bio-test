@@ -1,13 +1,14 @@
 import type { CSSProperties } from "react";
-import Image from "next/image";
-import { ParticleBackground } from "@/components/particle-background-client";
+import { ParticleBackground } from "@/components/particle-background";
 import { SocialIcon } from "@/components/social-icons";
 import { getLinks } from "@/lib/blob-links";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const data = await getLinks();
+  const cinematicBio =
+    "I&apos;m 18. <strong>God</strong> gave me <strong>purpose</strong> before I had a plan.<br/><strong>Your free 7-day blueprint is waiting.</strong>";
 
   return (
     <main
@@ -26,7 +27,6 @@ export default async function Home() {
         } as CSSProperties
       }
     >
-      {/* Renders after hydration — never blocks first paint */}
       <ParticleBackground />
       <div className="lun-glow" />
 
@@ -35,13 +35,10 @@ export default async function Home() {
           <div className="lun-logo-ring" />
           <div className="lun-logo-ring-2" />
           {data.logoUpdatedAt ? (
-            <Image
+            <img
               className="lun-logo-img"
               src={`/api/logo?v=${encodeURIComponent(data.logoUpdatedAt)}`}
               alt={`${data.profileName} logo`}
-              width={96}
-              height={96}
-              priority
             />
           ) : (
             <div className="lun-logo-fallback">LN</div>
@@ -56,13 +53,10 @@ export default async function Home() {
           <div className="lun-divider-line" />
         </div>
 
-        {/* 🔧 FIX 5: Plain JSX — no runtime cost, no XSS surface area */}
-        <p className="lun-bio">
-          I&apos;m 18. <strong>God</strong> gave me <strong>purpose</strong>{" "}
-          before I had a plan.
-          <br />
-          <strong>Your free 7-day blueprint is waiting.</strong>
-        </p>
+        <p
+          className="lun-bio"
+          dangerouslySetInnerHTML={{ __html: cinematicBio }}
+        />
 
         <div className="lun-socials">
           {data.socials.map((social) => (
@@ -82,7 +76,7 @@ export default async function Home() {
         <div className="lun-section-label">— {data.sectionLabel} —</div>
 
         <div className="lun-links">
-          {data.links.map((link) =>
+          {data.links.map((link) => (
             link.featured ? (
               <a
                 key={link.id}
@@ -123,7 +117,7 @@ export default async function Home() {
                 <span className="lun-link-arrow">→</span>
               </a>
             )
-          )}
+          ))}
         </div>
 
         <div className="lun-footer">

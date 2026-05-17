@@ -5,9 +5,6 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
-  images: {
-    remotePatterns: [{ hostname: "links.levelupnation.online" }]
-  }
 };
 
 export default nextConfig;
