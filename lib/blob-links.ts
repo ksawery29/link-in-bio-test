@@ -173,7 +173,8 @@ export async function getLinks() {
       throw new BlobNotFoundError();
     }
 
-    const raw = await new Response(blob.stream).text();
+    const raw = await new Response(blob.stream, {}).text();
+
     const trimmed = raw.trim();
 
     if (!trimmed) {
