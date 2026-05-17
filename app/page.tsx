@@ -1,15 +1,20 @@
 import type { CSSProperties } from "react";
-import { ParticleBackground } from "@/components/particle-background";
+import dynamic from "next/dynamic";
+import Image from "next/image";
 import { SocialIcon } from "@/components/social-icons";
 import { getLinks } from "@/lib/blob-links";
-
-export const dynamic = "force-dynamic";
-
+ 
+// deferred until after hydration so it never blocks LCP.
+const ParticleBackground = dynamic(
+  () => import("@/components/particle-background").then((m) => m.ParticleBackground),
+  { ssr: false }
+);
+ 
+export const revalidate = 60;
+ 
 export default async function Home() {
   const data = await getLinks();
-  const cinematicBio =
-    "I&apos;m 18. <strong>God</strong> gave me <strong>purpose</strong> before I had a plan.<br/><strong>Your free 7-day blueprint is waiting.</strong>";
-
+ 
   return (
     <main
       className="lun-shell"
@@ -27,37 +32,43 @@ export default async function Home() {
         } as CSSProperties
       }
     >
+      {/* Renders after hydration — never blocks first paint */}
       <ParticleBackground />
       <div className="lun-glow" />
-
+ 
       <div className="lun-container">
         <div className="lun-logo-wrap">
           <div className="lun-logo-ring" />
           <div className="lun-logo-ring-2" />
           {data.logoUpdatedAt ? (
-            <img
+            <Image
               className="lun-logo-img"
               src={`/api/logo?v=${encodeURIComponent(data.logoUpdatedAt)}`}
               alt={`${data.profileName} logo`}
+              width={96}
+              height={96}
+              priority
             />
           ) : (
             <div className="lun-logo-fallback">LN</div>
           )}
         </div>
-
+ 
         <div className="lun-profile-name">LEVEL UP NATION</div>
-
+ 
         <div className="lun-divider">
           <div className="lun-divider-line" />
           <div className="lun-divider-diamond" />
           <div className="lun-divider-line" />
         </div>
-
-        <p
-          className="lun-bio"
-          dangerouslySetInnerHTML={{ __html: cinematicBio }}
-        />
-
+ 
+        <p className="lun-bio">
+          I&apos;m 18. <strong>God</strong> gave me <strong>purpose</strong>{" "}
+          before I had a plan.
+          <br />
+          <strong>Your free 7-day blueprint is waiting.</strong>
+        </p>
+ 
         <div className="lun-socials">
           {data.socials.map((social) => (
             <a
@@ -72,11 +83,11 @@ export default async function Home() {
             </a>
           ))}
         </div>
-
+ 
         <div className="lun-section-label">— {data.sectionLabel} —</div>
-
+ 
         <div className="lun-links">
-          {data.links.map((link) => (
+          {data.links.map((link) =>
             link.featured ? (
               <a
                 key={link.id}
@@ -117,9 +128,9 @@ export default async function Home() {
                 <span className="lun-link-arrow">→</span>
               </a>
             )
-          ))}
+          )}
         </div>
-
+ 
         <div className="lun-footer">
           <p className="lun-footer-verse">{data.footerVerse}</p>
         </div>
